@@ -9,6 +9,27 @@ import org.junit.jupiter.api.Assertions;
 
 public class FindNumberTest {
     private static int findNumber(int[] input, int element) {
+        if (input.length == 0) {
+            return -1;
+        }
+        
+        int left = 0;
+        int right = input.length - 1;
+        
+        while (left <= right) {
+            int middle = left + (right - left) / 2;
+            
+            if (input[middle] == element) {
+                return middle;
+            }
+            
+            if (input[middle] < element) {
+                left = middle + 1;
+            } else {
+                right = middle - 1;
+            }
+        }
+        
         return -1;
     }
 
