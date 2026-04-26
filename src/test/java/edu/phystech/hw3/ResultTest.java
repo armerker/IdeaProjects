@@ -1,6 +1,7 @@
 package edu.phystech.hw3;
 
-
+import java.util.function.Function;
+import java.util.function.Supplier;
 import edu.phystech.hw3.result.Failure;
 import edu.phystech.hw3.result.Result;
 import edu.phystech.hw3.result.ResultUtil;
@@ -9,7 +10,7 @@ import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
 
 
-public class Result<T> {
+class Result<T> {
     private final T value;
     private final Throwable exception;
     private final boolean isSuccess;
