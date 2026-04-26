@@ -2,6 +2,7 @@ package edu.phystech.hw3;
 
 import java.util.List;
 import java.util.function.Function;
+import java.util.ArrayList;
 
 import edu.phystech.hw3.shape.Disk;
 import edu.phystech.hw3.shape.Shape;
