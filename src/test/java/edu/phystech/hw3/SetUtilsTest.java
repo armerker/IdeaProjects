@@ -2,7 +2,7 @@ package edu.phystech.hw3;
 
 import java.util.Collections;
 import java.util.Set;
-
+import java.util.HashSet;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
