@@ -1,5 +1,18 @@
 package edu.phystech.hw4;
 
+
+class ConcurrentCounter {
+    private final java.util.concurrent.atomic.AtomicLong value = new java.util.concurrent.atomic.AtomicLong(0);
+    
+    void increment() {
+        value.incrementAndGet();
+    }
+
+    long getValue() {
+        return value.get();
+    }
+}
+
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
