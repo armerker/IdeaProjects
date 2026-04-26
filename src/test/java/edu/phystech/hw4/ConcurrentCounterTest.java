@@ -1,5 +1,13 @@
 package edu.phystech.hw4;
 
+import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.stream.IntStream;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 class ConcurrentCounter {
     private final java.util.concurrent.atomic.AtomicLong value = new java.util.concurrent.atomic.AtomicLong(0);
@@ -13,31 +21,6 @@ class ConcurrentCounter {
     }
 }
 
-import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-
-/**
- * @author kzlv4natoly
- */
-class ConcurrentCounter {
-    private long value = 0;
-    void increment() {}
-
-    long getValue() { return 0; }
-}
-
-
 public class ConcurrentCounterTest {
 
     @Test
@@ -46,7 +29,6 @@ public class ConcurrentCounterTest {
         IntStream.range(0, 100_000).forEach(i -> concurrentCounter.increment());
         Assertions.assertEquals(100_000, concurrentCounter.getValue());
     }
-
 
     @Test
     void worksWithConcurrentIncrement() throws InterruptedException {
