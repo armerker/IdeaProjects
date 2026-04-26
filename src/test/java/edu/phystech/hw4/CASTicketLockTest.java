@@ -1,5 +1,22 @@
 package edu.phystech.hw4;
 
+import java.util.concurrent.atomic.AtomicInteger;
+public class CASTicketLock {
+    private final AtomicInteger nextTicket = new AtomicInteger(0);
+    private final AtomicInteger nowServing = new AtomicInteger(0);
+    
+    public void lock() {
+        int myTicket = nextTicket.getAndIncrement();
+        while (nowServing.get() != myTicket) {
+            Thread.yield();
+        }
+    }
+    
+    public void unlock() {
+        nowServing.incrementAndGet();
+    }
+}
+
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
