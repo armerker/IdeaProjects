@@ -1,5 +1,39 @@
 package edu.phystech.hw4;
 
+import java.util.ArrayList;
+import java.util.List;
+
+public class Stepper {
+    public enum Side {
+        LEFT, RIGHT
+    }
+    
+    private final List<Side> history = new ArrayList<>();
+    private int nextStep = 0;
+    
+    public synchronized void leftStep() throws InterruptedException {
+        while (nextStep != 0) {
+            wait();
+        }
+        history.add(Side.LEFT);
+        nextStep = 1;
+        notifyAll();
+    }
+    
+    public synchronized void rightStep() throws InterruptedException {
+        while (nextStep != 1) {
+            wait();
+        }
+        history.add(Side.RIGHT);
+        nextStep = 0;
+        notifyAll();
+    }
+    
+    public synchronized List<Side> getHistory() {
+        return new ArrayList<>(history);
+    }
+}
+
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
