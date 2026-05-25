@@ -1,44 +1,54 @@
-package edu.phystech.hw5;
-
-import java.util.HashSet;
-import java.util.Set;
-
+package edu.phystech.hw5.service;
 
 import edu.phystech.hw5.annotation.Cacheable;
-import edu.phystech.hw5.service.CacheUtils;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.concurrent.ConcurrentHashMap;
 
+public class CacheableInvocationHandler implements InvocationHandler {
 
-/**
- * @author kzlv4natoly
- */
-public class CacheableTest {
+    private final Object target;
+    private final ConcurrentHashMap<CacheKey, Object> cache = new ConcurrentHashMap<>();
 
-    public interface StringTransformation {
-        @Cacheable
-        String transform(String s);
+    public CacheableInvocationHandler(Object target) {
+        this.target = target;
     }
 
-    @Test
-    public void justWorks() {
-        StringTransformation singleArgumentCallTransformation = new StringTransformation() {
-            private final Set<String> seenArgs = new HashSet<>();
-
-            @Override
-            public String transform(String s) {
-                if (seenArgs.contains(s)) {
-                    throw new IllegalStateException("Second method call with the same argument!");
-                }
-                seenArgs.add(s);
-                return s.toUpperCase();
+    @Override
+    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+        if (method.isAnnotationPresent(Cacheable.class)) {
+            CacheKey key = new CacheKey(method, args);
+            if (cache.containsKey(key)) {
+                return cache.get(key);
             }
-        };
+            Object result = method.invoke(target, args);
+            cache.put(key, result);
+            return result;
+        }
+        return method.invoke(target, args);
+    }
 
-        StringTransformation cachedProxy =
-                CacheUtils.getCacheProxy(StringTransformation.class, singleArgumentCallTransformation);
-        String firstCallResult = Assertions.assertDoesNotThrow(() -> cachedProxy.transform("abc"));
-        String secondCallResult = Assertions.assertDoesNotThrow(() -> cachedProxy.transform("abc"));
-        Assertions.assertEquals(firstCallResult, secondCallResult);
+    private static class CacheKey {
+        private final Method method;
+        private final Object[] args;
+
+        CacheKey(Method method, Object[] args) {
+            this.method = method;
+            this.args = args;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) return true;
+            if (!(obj instanceof CacheKey)) return false;
+            CacheKey that = (CacheKey) obj;
+            return method.equals(that.method) && Arrays.deepEquals(args, that.args);
+        }
+
+        @Override
+        public int hashCode() {
+            return 31 * method.hashCode() + Arrays.deepHashCode(args);
+        }
     }
 }
