@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 
 public class ValidatorTest {
 
-    private Validator validator = object -> {
+    private Validator validator = Validator::performValidation; {
         for (Field field : object.getClass().getDeclaredFields()) {
             field.setAccessible(true);
             if (field.getType() != String.class) continue;
