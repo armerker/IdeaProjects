@@ -1,12 +1,75 @@
 package edu.phystech.hw3;
 
-
+import java.util.function.Function;
+import java.util.function.Supplier;
 import edu.phystech.hw3.result.Failure;
 import edu.phystech.hw3.result.Result;
 import edu.phystech.hw3.result.ResultUtil;
 import edu.phystech.hw3.result.Success;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
+
+
+class Result<T> {
+    private final T value;
+    private final Throwable exception;
+    private final boolean isSuccess;
+    
+    private Result(T value, Throwable exception, boolean isSuccess) {
+        this.value = value;
+        this.exception = exception;
+        this.isSuccess = isSuccess;
+    }
+    
+    public static <T> Result<T> success(T value) {
+        return new Result<>(value, null, true);
+    }
+    
+    public static <T> Result<T> failure(Throwable exception) {
+        return new Result<>(null, exception, false);
+    }
+    
+    public boolean isSuccess() {
+        return isSuccess;
+    }
+    
+    public boolean isFailure() {
+        return !isSuccess;
+    }
+    
+    public T getOrDefault(T defaultValue) {
+        return isSuccess ? value : defaultValue;
+    }
+    
+    public Throwable getExceptionOrNull() {
+        return isFailure ? exception : null;
+    }
+    
+    public <U> Result<U> map(Function<T, U> mapper) {
+        if (isSuccess) {
+            return success(mapper.apply(value));
+        }
+        return failure(exception);
+    }
+    
+    @Override
+    public String toString() {
+        if (isSuccess) {
+            return "Success(" + value + ")";
+        }
+        return "Failure(" + exception + ")";
+    }
+}
+
+class ResultUtil {
+    public static <T> Result<T> execute(Supplier<T> supplier) {
+        try {
+            return Result.success(supplier.get());
+        } catch (Throwable t) {
+            return Result.failure(t);
+        }
+    }
+}
 
 public class ResultTest {
 

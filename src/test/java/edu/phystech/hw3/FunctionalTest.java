@@ -2,11 +2,30 @@ package edu.phystech.hw3;
 
 import java.util.List;
 import java.util.function.Function;
+import java.util.ArrayList;
 
 import edu.phystech.hw3.shape.Disk;
 import edu.phystech.hw3.shape.Shape;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+class Functional {
+    public static <T, R> List<R> map(List<T> list, Function<T, R> mapper) {
+        List<R> result = new ArrayList<>();
+        for (T item : list) {
+            result.add(mapper.apply(item));
+        }
+        return result;
+    }
+    
+    public static <T> T reduce(List<T> list, java.util.function.BinaryOperator<T> reducer, T identity) {
+        T result = identity;
+        for (T item : list) {
+            result = reducer.apply(result, item);
+        }
+        return result;
+    }
+}
 
 public class FunctionalTest {
 
