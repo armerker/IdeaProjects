@@ -6,15 +6,37 @@ import org.junit.jupiter.api.Assertions;
 public class NumberPresentationTest {
 
     private static String toBinary(int x) {
-        return "";
+        if (x == 0) return "0";
+        StringBuilder result = new StringBuilder();
+        int num = x;
+        while (num > 0) {
+            result.insert(0, num % 2);
+            num = num / 2;
+        }
+        return result.toString();
     }
 
     private static String toOct(int x) {
-        return "";
+        if (x == 0) return "0";
+        StringBuilder result = new StringBuilder();
+        int num = x;
+        while (num > 0) {
+            result.insert(0, num % 8);
+            num = num / 8;
+        }
+        return result.toString();
     }
 
     private static String toHex(int x) {
-        return "";
+        if (x == 0) return "0";
+        StringBuilder result = new StringBuilder();
+        int num = x;
+        char[] hexDigits = {'0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f'};
+        while (num > 0) {
+            result.insert(0, hexDigits[num % 16]);
+            num = num / 16;
+        }
+        return result.toString();
     }
 
     @Test
