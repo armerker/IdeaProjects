@@ -1,18 +1,30 @@
 package edu.phystech.hw4;
 
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.IntStream;
-
-import edu.phystech.hw4.lock.CASTicketLock;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-/**
- * @author kzlv4natoly
- */
+class CASTicketLock {
+    private final AtomicInteger nextTicket = new AtomicInteger(0);
+    private final AtomicInteger nowServing = new AtomicInteger(0);
+    
+    public void lock() {
+        int myTicket = nextTicket.getAndIncrement();
+        while (nowServing.get() != myTicket) {
+            Thread.yield();
+        }
+    }
+    
+    public void unlock() {
+        nowServing.incrementAndGet();
+    }
+}
+
 class Counter {
     private int value = 0;
 
@@ -23,6 +35,7 @@ class Counter {
         return value;
     }
 }
+
 public class CASTicketLockTest {
 
     @Test
@@ -36,7 +49,6 @@ public class CASTicketLockTest {
         });
         Assertions.assertEquals(100_000, counter.getValue());
     }
-
 
     @Test
     void worksWithConcurrentIncrement() throws InterruptedException {
